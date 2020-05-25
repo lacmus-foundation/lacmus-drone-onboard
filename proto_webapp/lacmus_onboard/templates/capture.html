@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% set title = "Image Capture" %}
+
+{% block content %}
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<h3>Zoom value: {{ zoom }}</h3>
+
+<form action="{{ url('set_zoom') }}" method="post">
+	<label>Set zoom value</label>
+	<input type="text" value="{{ zoom }}" name="zoom">
+	<input type="submit" value="Set zoom" />
+</form>
+<hr>
+<form action="{{ url('do_capture') }}" method="post">
+
+	<table>
+		<tr>
+			<td><label>Focus mode</label></td>
+			
+			<td>
+				<select name="focus_mode" id="focus_mode">
+				    <option value="AF">AF</option>
+				    <option value="MF">MF</option>
+				    
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Focus distance</label></td>
+			<td><input type="number" name="focus_distance"></td>
+		</tr>
+<!-- 		<tr>
+			<td><label>ISO</label></td>
+			<td><input type="text" name="iso"></td>
+			<td>
+				<select name="iso" id="iso">
+				    <option value="">--</option>
+				    <option value="100">100</option>
+				    <option value="200">200</option>
+				    <option value="400">400</option>
+				    <option value="800">800</option>
+				    <option value="1600">1600</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Shutter speed</label></td>
+			<td><input type="text" name="shutter_speed"></td>
+		</tr>
+		<tr>
+			<td><label>Aperture</label></td>
+			<td><input type="text" name="aperture"></td>
+		</tr> -->
+	</table>
+
+	<input type="submit" value="Do Capture" />
+</form>
+{% endblock %}

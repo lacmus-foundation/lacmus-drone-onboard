@@ -5,7 +5,7 @@ from . import views
 from . import settings
 
 
-PROJECT_ROOT = settings.BASE_DIR / 'lacmus_onboard'
+PROJECT_ROOT = settings.PROJECT_ROOT
 
 
 def setup_routes(app):

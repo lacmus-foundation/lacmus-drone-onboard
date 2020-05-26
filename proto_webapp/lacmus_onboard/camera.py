@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 CHDKPTP_ROOT = settings.CHDKPTP_BASE_PATH
-SHOOT_SCRIPT_PATH = os.path.join(CHDKPTP_ROOT, 'shoot.lua')
+SHOOT_SCRIPT_PATH = settings.PROJECT_ROOT / 'shoot.lua'
 
 
 class Camera:

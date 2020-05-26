@@ -2,9 +2,10 @@
 import pathlib
 
 from . import views
+from . import settings
 
 
-PROJECT_ROOT = pathlib.Path(__file__).parent
+PROJECT_ROOT = settings.BASE_DIR / 'lacmus_onboard'
 
 
 def setup_routes(app):

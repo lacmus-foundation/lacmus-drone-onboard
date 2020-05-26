@@ -4,14 +4,29 @@
 
 {% block content %}
 <a href="{{ url('capture') }}">Capture</a>
-{% if questions %}
-    <ul>
-    {% for question in questions %}
-    <li><a href="{{ url('poll', question_id=question.id) }}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
+{% if images %}
+    <table>
+    	<tr>
+    		<th>link</th>
+    		<th>iso</th>
+    		<th>tv</th>
+    		<th>av</th>
+    		<th>fl</th>
+    		<th>fl 35mm</th>
+    	</tr>
+    	{% for img in images %}
+    	<tr>
+    		<td><a href="{{ img.url }}">{{ img.url }}</a></td>
+    		<td>{{ img.iso }}</td>
+    		<td>{{ img.tv }}</td>
+    		<td>{{ img.f_number }}</td>
+    		<td>{{ img.focal_length }}</td>
+    		<td>{{ img.focal_length_35 }}</td>
+    	</tr>
+    	{% endfor %}
+    </table>
 {% else %}
-    <p>No polls are available.</p>
+    <p>No images.</p>
 {% endif %}
 
 {% endblock %}

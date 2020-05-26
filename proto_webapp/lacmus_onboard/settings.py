@@ -14,9 +14,9 @@ DEFAULT_CONFIG_PATH = BASE_DIR / 'config' / 'polls.yaml'
 
 
 if os.uname().machine == 'x86_64':  # ubuntu on PC
-	CHDKPTP_BASE_PATH = pathlib.Path(__file__) / 'chdkptp'
+	CHDKPTP_BASE_PATH = PROJECT_ROOT / 'chdkptp'
 elif os.uname().machine == 'armv7l': # raspbertty pi
-	CHDKPTP_BASE_PATH = pathlib.Path(__file__) / 'chdkptp-rpi'
+	CHDKPTP_BASE_PATH = PROJECT_ROOT / 'chdkptp-rpi'
 
 def get_config(argv=None):
     ap = argparse.ArgumentParser()

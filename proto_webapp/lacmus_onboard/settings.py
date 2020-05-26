@@ -9,7 +9,7 @@ from lacmus_onboard.utils import TRAFARET
 
 
 BASE_DIR = pathlib.Path(__file__).parent.parent
-PROJECT_ROOT = settings.BASE_DIR / 'lacmus_onboard'
+PROJECT_ROOT = BASE_DIR / 'lacmus_onboard'
 DEFAULT_CONFIG_PATH = BASE_DIR / 'config' / 'polls.yaml'
 
 

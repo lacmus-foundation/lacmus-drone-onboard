@@ -21,7 +21,8 @@ def read_version():
 install_requires = ['aiohttp',
                     # 'aiopg[sa]',
                     'aiohttp-jinja2',
-                    'trafaret-config']
+                    'trafaret-config',
+                    'exif']
 
 
 setup(name='lacmus-onboard',

@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 CHDKPTP_ROOT = settings.CHDKPTP_BASE_PATH
 SHOOT_SCRIPT_PATH = settings.PROJECT_ROOT / 'shoot.lua'
+CAPTURE_PATH = settings.PROJECT_ROOT.parent / 'captures'
 
 
 class Camera:
@@ -28,11 +29,10 @@ class Camera:
         await self.proc.stdin.drain()
         ret = await self.proc.stdout.readline()
         if single_read is False:
-            logger.info("Cmd: %s, ret x:%s", cmd, ret)
             ret = await self.proc.stdout.readline()
         if fin:
             await self.proc.stdout.readline()
-        logger.info("Cmd: %s, ret:%s", cmd, ret)
+        logger.info("Cmd: %s, ret: %s", cmd, ret)
         return ret
 
     async def init(self):
@@ -45,11 +45,16 @@ class Camera:
             stderr=subprocess.PIPE)
         logger.info("Chkptp subprocess started with pid: %s", self.proc.pid)
         await self.send_command("set usb_reset_on_close=true")
-        await self.send_command("connect", single_read=False)
+        res = await self.send_command("connect", single_read=False)
+        if not res.startswith(b'connected: Canon'):
+            logger.info("Camera init failure: %s", res)
+            return False 
         await asyncio.sleep(1)
         await self.send_command("rec")  # TODO: move to separate call - rec/display mode switch 
+        await self.send_command("imrm")  
         await asyncio.sleep(1)
         logger.info("Camera init done")
+        return True
 
     async def close(self):
         self.proc.terminate()
@@ -72,9 +77,12 @@ class Camera:
         cmd = 'rs {} {}\n'.format(fname, cmd_params)
         ret = await self.send_command(cmd, single_read=False, fin=True)
 
-        wfname = fname + '.jpg'
-        while not os.path.exists(wfname):
+        wfname = "{}/{}.{}".format(fname.parts[-2], fname.parts[-1], 'jpg')
+        tmr = 100
+        while not os.path.exists(wfname) and tmr > 0:
+            logger.info("Wait file %s, %s", wfname, tmr)
             await asyncio.sleep(0.1)  # TODO:  add wait timeout
+            tmr -= 1
         self.counter += 1
         return wfname
 
@@ -86,13 +94,19 @@ class Camera:
         return zoom.decode()
 
     def make_fname(self, n):
-        fname = 'captures/img_{}'.format(n)
+        fname = CAPTURE_PATH / 'iamge_{}'.format(n)
         return fname
 
 
 async def camera_init(app):
     camera = Camera()
-    await camera.init()
+    for n in range(5):
+        res = await camera.init()
+        if res is True:
+            break
+    else:
+        raise RuntimeError("Camera init failure")
+
     app['camera'] = camera
 
 

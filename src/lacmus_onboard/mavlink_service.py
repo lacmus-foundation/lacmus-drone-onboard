@@ -64,14 +64,12 @@ class LoggerStatus:
 class MAVLinkService:
 
     MESSAGE_IDS = (
-        mavlink2.MAVLINK_MSG_ID_HEARTBEAT,
+        # mavlink2.MAVLINK_MSG_ID_HEARTBEAT,
         mavlink2.MAVLINK_MSG_ID_CAMERA_IMAGE_CAPTURED,
-        mavlink2.MAV_CMD_REQUEST_CAMERA_SETTINGS,
         mavlink2.MAVLINK_MSG_ID_CAMERA_TRIGGER,
         mavlink2.MAVLINK_MSG_ID_CAMERA_CAPTURE_STATUS,
-        mavlink2.MAV_CMD_IMAGE_START_CAPTURE,
-        mavlink2.MAV_CMD_IMAGE_STOP_CAPTURE,
-        mavlink2.MAV_CMD_DO_DIGICAM_CONTROL,
+        mavlink2.MAVLINK_MSG_ID_COMMAND_INT,
+        mavlink2.MAVLINK_MSG_ID_COMMAND_LONG,
     )
 
     def __init__(self, system_id, component_id, udp_endpoint):

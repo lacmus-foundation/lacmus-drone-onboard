@@ -2582,7 +2582,8 @@ Standard string substitutions
 				if wstatus.msg then
 					con:read_all_msgs({
 						['return']=function(msg,opts)
-							warnf("unexpected script return %s\n",tostring(msg.value))
+							-- warnf("unexpected script return %s %s\n",tostring(msg.value), type(msg.value))
+							printf("%s", msg.value)
 						end,
 						user=function(msg,opts)
 							warnf("unexpected script msg %s\n",tostring(msg.value))

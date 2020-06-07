@@ -51,7 +51,6 @@ async def index(request):
         }
         with open(img_path, 'rb') as f:
             exif_img = exif.Image(f)
-            print(dir(exif_img))
             im_data['f_number'] = exif_img.f_number
             im_data['focal_length'] = exif_img.focal_length
             im_data['focal_length_35'] = exif_img.focal_length * CROP_1_7
@@ -71,7 +70,6 @@ async def capture(request):
 
 async def do_capture(request):
     data = await request.post()
-    print("DATA", data)
     camera = request.app['camera']
     img_path = await camera.capture(data)
     router = request.app.router

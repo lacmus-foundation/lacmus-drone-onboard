@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 CHDKPTP_ROOT = settings.CHDKPTP_BASE_PATH
 SHOOT_SCRIPT_PATH = settings.PROJECT_ROOT / 'shoot.lua'
-CAPTURE_PATH = settings.PROJECT_ROOT / 'captures'
+CAPTURE_PATH = settings.PROJECT_ROOT.parent / 'captures'
 
 
 def get_target_fl(distance, resolution):
@@ -41,13 +41,14 @@ class Camera:
         ret = await self.proc.stdout.readline()
         logger.info("Cmd: %s, ret 1:%s", cmd, ret)
         if single_read is False:
-            logger.info("Cmd read 2: %s", cmd)
             ret = await self.proc.stdout.readline()
             logger.info("Cmd: %s, ret 2:%s", cmd, ret)
         if fin:
             logger.info("Cmd read 3: %s", cmd)
             await self.proc.stdout.readline()
             logger.info("Cmd: %s, ret 3:%s", cmd, ret)
+
+        logger.info("Cmd: %s, ret: %s", cmd, ret)
         return ret
 
     async def init(self):
@@ -64,9 +65,11 @@ class Camera:
         await asyncio.sleep(0.1)
         res = await self.send_command("connect", single_read=False)
         if not res.startswith(b'connected: Canon'):
+
             return False 
         await asyncio.sleep(1)
         await self.send_command("rec")  # TODO: move to separate call - rec/display mode switch 
+        await self.send_command("imrm")  
         await asyncio.sleep(1)
         logger.info("Camera init done")
         return True
@@ -92,9 +95,12 @@ class Camera:
         cmd = 'rs {} {}\n'.format(fname, cmd_params)
         ret = await self.send_command(cmd, single_read=False, fin=True)
 
-        wfname = fname + '.jpg'
-        while not os.path.exists(wfname):
+        wfname = "{}/{}.{}".format(fname.parts[-2], fname.parts[-1], 'jpg')
+        tmr = 100
+        while not os.path.exists(wfname) and tmr > 0:
+            logger.info("Wait file %s, %s", wfname, tmr)
             await asyncio.sleep(0.1)  # TODO:  add wait timeout
+            tmr -= 1
         self.counter += 1
         return wfname
 
@@ -106,7 +112,7 @@ class Camera:
         return zoom.decode()
 
     def make_fname(self, n):
-        fname = CAPTURE_PATH / 'img_{}'.format(n)
+        fname = CAPTURE_PATH / 'image_{}'.format(n)
         return fname
 
 

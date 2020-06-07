@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<mavlink>
+  <include>common.xml</include>
+  <version>3</version>
+  <enums>
+    </enums>
+  <messages>
+    <!-- Messages specifically designated for the Lacmus project -->
+    <message id="7000" name="LACMUS_OBJECT_DETECTED">
+      <description>Information about a detected object</description>
+      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
+      <field type="uint64_t" name="time_utc" units="us">Timestamp (time since UNIX epoch) in UTC. 0 for unknown.</field>
+      <field type="uint8_t" name="camera_id">Camera ID (1 for first, 2 for second, etc.)</field>
+      <field type="int32_t" name="lat" units="degE7">Latitude where image was taken</field>
+      <field type="int32_t" name="lon" units="degE7">Longitude where capture was taken</field>
+      <field type="int32_t" name="alt" units="mm">Altitude (MSL) where image was taken</field>
+      <field type="int32_t" name="relative_alt" units="mm">Altitude above ground</field>
+      <field type="int32_t" name="source_image_index">Zero based index of this image (image count since armed -1)</field>
+      <field type="uint16_t[4]" name="bbox">Bound box of detected object</field>
+      <field type="char[205]" name="file_url">URL of detection sample.</field>
+    </message>
+  </messages>
+</mavlink>

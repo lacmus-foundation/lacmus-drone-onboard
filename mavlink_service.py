@@ -72,6 +72,9 @@ class MAVLogger:
         mavlink2.MAV_CMD_REQUEST_CAMERA_SETTINGS,
         mavlink2.MAVLINK_MSG_ID_CAMERA_TRIGGER,
         mavlink2.MAVLINK_MSG_ID_CAMERA_CAPTURE_STATUS,
+        mavlink2.MAV_CMD_IMAGE_START_CAPTURE,
+        mavlink2.MAV_CMD_IMAGE_STOP_CAPTURE,
+        mavlink2.MAV_CMD_DO_DIGICAM_CONTROL,
     )
 
     def __init__(self, system_id, component_id, udp_endpoint):
@@ -139,6 +142,21 @@ class MAVLogger:
             mid = m.get_msgId()
             if mid in self.MESSAGE_IDS:
                 print(m.to_dict())
+            if mid == mavlink2.MAVLINK_MSG_ID_CAMERA_TRIGGER:
+                capture = {
+                    "time_boot_ms": 100,                  # : Timestamp (time since system boot). [ms] (type:uint32_t)
+                    "time_utc": 1234,                     # : Timestamp (time since UNIX epoch) in UTC. 0 for unknown. [us] (type:uint64_t)
+                    "camera_id": 1,                       # : Camera ID (1 for first, 2 for second, etc.) (type:uint8_t)
+                    "lat": 1231233,                       # : Latitude where image was taken [degE7] (type:int32_t)
+                    "lon": 3321312,                       # : Longitude where capture was taken [degE7] (type:int32_t)
+                    "alt": 12,                            # : Altitude (MSL) where image was taken [mm] (type:int32_t)
+                    "relative_alt": 22,                   # : Altitude above ground [mm] (type:int32_t)
+                    "q": (0, 0, 0, 0),                    # : Quaternion of camera orientation (w, x, y, z order, zero-rotation is 0, 0, 0, 0) (type:float)
+                    "image_index": 7,                     # : Zero based index of this image (image count since armed -1) (type:int32_t)
+                    "capture_result": True,               # : Boolean indicating success (1) or failure (0) while capturing this image. (type:int8_t)
+                    "file_url": b'/captures/image_7.jpg',  # : URL of image taken. Either local storage or http://foo.jpg if camera provides an HTTP interface. (type:char)
+                }
+                self.mav.camera_image_captured_send(**capture)
 
     async def consume(self):
         logger.info('Start consume task for %s', self)
@@ -169,7 +187,7 @@ class MAVLogger:
 
 if __name__ == '__main__':
     async def main():
-        mav_logger = MAVLogger(2, 100, ('127.0.0.1', 5555))
+        mav_logger = MAVLogger(2, 100, ('127.0.0.1', 14530))
         await mav_logger.start()
         await asyncio.sleep(30)
     #iloop = asyncio.get_event_loop()
